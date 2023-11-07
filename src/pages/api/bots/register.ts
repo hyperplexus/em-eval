@@ -1,6 +1,6 @@
-import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiHandler } from 'next'
 import { getServerSession } from 'next-auth/next';
-import ogm, { User } from '@/graphql/ogm';
+import { User } from '@/graphql/ogm';
 import { Service } from '@/graphql/ogm';
 
 

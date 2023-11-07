@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
@@ -23,6 +24,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/graphql/apollo/client.js", "src/components/UserList.jsx", "src/graphql/index.js", "src/graphql/client.mts", "src/scripts/generate-schema.ts", "src/graphql/resolvers.ts", "src/graphql/schema.ts", "src/graphql/neo4j.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/graphql/apollo/client.js", "src/components/UserList.jsx", "src/graphql/index.ts", "src/graphql/client.js", "src/scripts/generate-schema.ts", "src/graphql/resolvers.ts", "src/graphql/schema.ts", "src/graphql/neo4j.ts"],
   "exclude": ["node_modules"]
 }

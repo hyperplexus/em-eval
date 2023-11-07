@@ -1,37 +1,15 @@
-import { driver } from '../../graphql/neo4j';
-import { startServerAndCreateNextHandler } from '@as-integrations/next'
-import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core"
-import  resolvers  from '../../graphql/resolvers';
-import { allowCors } from '@/utils/network';
-import { NextApiRequest, NextApiResponse } from 'next';
-import ogm from '../../graphql/ogm';
+import ogm from "@/graphql/ogm";
+import { createYoga } from "graphql-yoga";
 
-
-const { ApolloServer } = require("apollo-server");
-
-require("dotenv").config({ path: ".env.local" });
-
-
-const server = new ApolloServer({
-    schema: ogm.schema,
-    context: ({ req }:any) => ({ req, driver }),
-    introspection: true,
-    playground: true,
-    url: "/api/graphql",
-    plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
-    resolvers
-});
-
-server.listen().then(({ url }:{url:string}) => {
-    console.log(`GraphQL server ready on ${url}`);
-});
-
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-    await startServerAndCreateNextHandler(server, {
-        context: async (req, res) => ({ req, res }),
-    })(req, res);
-    return;
-}
-
+    const initServer = async () => {
+        await ogm.init();
+        return ogm.schema;
+        };
+    // Here we generate the schema for the server based on the OGM
+    // This is the schema that will be used by the GraphQL server
   
-export default allowCors(handler)
+  // Note the use of the top-level await here in the call to initServer()
+  export default createYoga({
+    schema: await initServer(),
+    graphqlEndpoint: "/api/graphql",
+  });

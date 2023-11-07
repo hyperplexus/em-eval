@@ -1,6 +1,5 @@
 process.env['NODE_NO_WARNINGS'] = '1'
 
-require('dotenv').config({ path: '.env.local'})
 import readline from 'readline';
 import { getCosineSimilarities } from '@/helpers/cosineSimilarity';
 import colors from 'colors';
@@ -46,8 +45,8 @@ const runScript = async () => {
   if (!process.env.OPENAI_API_KEY) {
     await askForInput('Enter your OpenAI API key: ', (answer) => apiKey = answer);
   }
-  await askForInput(colors.bgWhite('Enter the question: '), (answer) => question = answer);
-  await askForInput(colors.bgWhite('Enter the original answer: '), (answer) => originalAnswer = answer);
+  await askForInput(colors.bgWhite.black('Enter the question: '), (answer) => question = answer);
+  await askForInput(colors.bgWhite.black('Enter the original answer: '), (answer) => originalAnswer = answer);
   await askEmsAnswers();
   colors.enable()
 

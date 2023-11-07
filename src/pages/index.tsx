@@ -4,8 +4,8 @@ import gql from 'graphql-tag';
 import styles from '../style/Home.module.css';
 import { SignInOut } from '../components/SignInOut';
 import { UserList } from '../components/UserList';
-import { User } from '@/graphql';
-import client from '../helpers/apolloClient';
+import { User } from '@/graphql/ogm-types';
+import client from '@/graphql/apollo';
 
 export async function getStaticProps() {
   const { data } = await client.query({
@@ -36,17 +36,8 @@ export async function getStaticProps() {
 }
 export default function Home({ users }:{ users: User[] }) {
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>[DEMO] Neo4j and Next.js</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+  
 
-      <header className={styles.header}>
-        <div>
-          <SignInOut />
-        </div>
-      </header>
 
       <main className={styles.main}>
         <h1 className={styles.title}>
@@ -55,14 +46,6 @@ export default function Home({ users }:{ users: User[] }) {
         <UserList className={styles.users} users={users} />
       </main>
 
-      <footer className={styles.footer}>
-        <a href="https://vercel.com" target="_blank" rel="noopener noreferrer">
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer>
-    </div>
+
   );
 }

@@ -1,9 +1,7 @@
 import NextAuth, { User } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
-import { CallbacksOptions } from 'next-auth';
 import neo4j from 'neo4j-driver';
 import { Neo4jAdapter } from '@next-auth/neo4j-adapter';
-import TwitterProvider from 'next-auth/providers/twitter';
 import GitHubProvider from 'next-auth/providers/github';
 import { AdapterUser } from 'next-auth/adapters';
 import { generateApiKey } from '@/helpers/apiKey';

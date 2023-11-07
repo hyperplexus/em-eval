@@ -1,46 +1,24 @@
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/dist/client/router.js';
-import { gql } from 'graphql-tag';
-import { User, useQuery } from '@/graphql';
+import BotCreationForm from '@/components/BotCreation';
 import BotList from '@/components/BotList';
-import Filter from '@/components/BotFilter';
+import BotFilter from '@/components/BotFilter';
+import styles from '../style/Home.module.css';
 
-
-const GET_USER = gql`
-  query GetUser($id: ID!) {
-    User(where: { id: $id }) {
-      apiKey
-    }
-  }
-`;
-
-export default function Dashboard() {
+const Dashboard = () => {
   const { data: session } = useSession();
   const router = useRouter();
   const [filter, setFilter] = useState({ text: '', showAuthorBots: false });
-  const { data, loading, error } = useQuery<User>(GET_USER, {
-    variables: { username: session?.user?.name },
-  }) 
-  useEffect(() => {
-    if (!loading && !session) {
-      router.push('/api/auth/signin');
-    }
-  }, [session, loading, router]);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  }
 
   return (
-    <div>
+    <main className={styles.main}>
       <h1>Dashboard</h1>
-      <Filter value={filter} onChange={setFilter} />
-      
-      {data ? <BotList user={data} filter={filter} /> : ""}
-    </div>
+      <BotFilter value={filter} onChange={setFilter} />
+      <BotList name={session?.user?.name!} filter={filter} />
+      <BotCreationForm />
+    </main>
   );
 }
+
+export default Dashboard;

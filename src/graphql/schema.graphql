@@ -32,8 +32,7 @@ input ServiceInput {
 type Bot @node(labels: ["App_Bot"]) {
   id: ID! @id
   endpoint: String!
-  username: String!
-  personName: String!
+  name: String!
   services: [Service!]! @relationship(type: "HAS_SERVICE", direction: OUT)
   conversations: [Conversation!]! @relationship(type: "PART_OF", direction: OUT)
   registeredBy: User! @relationship(type: "REGISTERED_BY", direction: OUT)
@@ -56,9 +55,10 @@ type EvaluationItem @node(labels: ["App_EvaluationItem"]) {
 
 type User @node(labels: ["App_User"]) {
   id: ID! @id
-  username: String!
+  name: String!
   email: String! @unique @auth(requires: OWNER)
   apiKey: String! @unique
+  image: String! @default(value: "https://api.adorable.io/avatars/285/1.png")
   bots: [Bot!]! @relationship(type: "HAS_BOT", direction: OUT)
   conversations: [Conversation!]! @relationship(type: "PART_OF", direction: OUT)
   ownedConversations: [Conversation!]! @relationship(type: "OWNED_BY", direction: IN)
@@ -66,6 +66,7 @@ type User @node(labels: ["App_User"]) {
 
 type Emulee @node(labels: ["App_Emulee"]) {
   name: String! @unique
+  bot: Bot! @relationship(type: "EMULATES", direction: OUT)
 }
 
 type Conversation @node(labels: ["App_Conversation"]) {

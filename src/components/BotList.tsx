@@ -1,37 +1,38 @@
 // src/components/BotList.tsx
 import { useState, useEffect, FC } from 'react';
 import { gql } from 'graphql-tag';
-import { User, useQuery } from '@/graphql';
+import {useQuery } from '@/graphql';
 import { Bot } from '@/graphql/ogm';
 import BotCard from '@/components/BotCard';
 import { Model, OGM } from '@neo4j/graphql-ogm';
 
 const GET_BOTS = gql`
   query GetBots {
-    Bots {
+    bots {
       id
-      username
-      owner {
-        username
-        avatar
+      name
+      registeredBy {
+        name
+        image
       }
-      chats {
+      conversations {
         id
       }
+      
     }
   }
 `;
 
 type BotListProps = {
-  user: User | null;
+  name:string;
   filter: {
     text: string;
     showAuthorBots: boolean;
   };
 };
 
-const BotList: FC<BotListProps> = ({ user, filter }) => {
-  const { data, loading, error } = useQuery<typeof Bot.model[]>(GET_BOTS);
+const BotList: FC<BotListProps> = ({ name, filter }) => {
+  const { data, loading, error } = useQuery<{ bots: typeof Bot.model[]}>(GET_BOTS);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -43,11 +44,9 @@ const BotList: FC<BotListProps> = ({ user, filter }) => {
     return <div>No bots found</div>;
   }
 
-  const filteredBots = data.filter(bot => 
-    bot.
-    bot.username.includes(filter.text) && (!filter.showAuthorBots || bot.registeredBy.username === user?.username)
+  const filteredBots = (data.bots).filter(bot => 
+    bot.username.includes(filter.text) && (!filter.showAuthorBots || bot.registeredBy.name === name)
   );
-
   return (
     <div>
       {filteredBots.map((bot) =>

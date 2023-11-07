@@ -1,16 +1,18 @@
-import { OGM, Model as BaseM, generate } from '@neo4j/graphql-ogm';
-import createYoga from 'graphql-yoga';
+import { OGM, Model as BaseM } from '@neo4j/graphql-ogm';
 import * as types  from './ogm-types';
 import { driver } from './neo4j';
 import resolvers from './resolvers';
 import { readFileSync } from 'fs';
-import path from 'path';
+import getConfig from 'next/config'
+import { Neo4jGraphQL } from '@neo4j/graphql';
 
+const config = getConfig()
 
-// Building the Neo4j GraphQL schema is an async process
-
-const typeDefs = readFileSync(path.join(__dirname, 'schema.graphql')).toString('utf-8');
-
+const schemaLocation = config?.serverRuntimeConfig?.PROJECT_ROOT ?
+  config.serverRuntimeConfig.PROJECT_ROOT + '/src/graphql/schema.graphql' :
+  __dirname + '/schema.graphql';
+const typeDefs = readFileSync(schemaLocation).toString('utf-8');
+export const neoSchema = new Neo4jGraphQL({ typeDefs, driver, resolvers });
 
 const ogm = new OGM({ typeDefs, driver, resolvers });
 
@@ -34,6 +36,8 @@ class Model<T, I> extends BaseM {
     }
   }
 }
+
+
 
 const Bot =  new Model<types.Bot, types.BotCreateInput>("Bot");
 const Service = new Model<types.Service, types.ServiceCreateInput>("Service");

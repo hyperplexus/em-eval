@@ -1,38 +1,55 @@
-# "Dashboard" page
+# TODO
 
-When navigating to /dashboard, a user should see a list of bots, both theirs and other users'.
+## Bot API
 
-- [x] A card for each of their bots, with:
-  - [ ] a link for creating a new chat and one that would expand a list of all the chats with that bot.
-  - [ ] (the link should create the chat and then redirect to it)
-  - [x] The name and avatar of the user who created the bot.
-- A filtering interface should be provided, so that the user can filter by:
-  - author
-  - bot's username
-  - emulee's username
-- a form to create a new one.
+This API allows the router to communicate with the bots and run evaluations. It can instantiate bots in different channels and through different APIs.
 
-This page, together with the chat, should be included in a new layout.
+Each bot is defined by:
 
-The layout will have: a sidebar / burger menu with all the past chats and a link to the developers page + a button to create a new one.
+- a username
+- the name of the person it is emulating
+- an endpoint (URL)
 
-# Your summary
-<!-- 
-Here are the tasks that need to be done based on the TODO file:
+Only one endpiint should be defined per bot. The endpoint will be called by the gateway when the bot is tagged or replied to, with the following POST request:
 
-1. In the dashboard.tsx file, you need to add a card for each bot. This card should contain:
-- A link for creating a new chat and one that would expand a list of all the chats with that bot.
-- The name and avatar of the user who created the bot.
+### Request [POST]
 
-2. You also need to provide a filtering interface on the dashboard page so that the user can filter bots by:
-- Author
-- Bot's username
-- Emulee's username --> DONE
+- Headers
+  - X-CALLER-KEY: A secret key that we will use to authenticate the request.
+- Body
+  - **context** (array[Message], required) - Previous messages relevant to the request.
+  - **conversation** (array[Conversation], optional) - If previous exchanges with the bot occurred, a set of these exchanges.
+  - **message** (Message, required) - The tagged/reply message.
+  - **users** (array[User], optional) - Information on mentioned users, by id.
+  
+<details>
+  <summary>Type definitions</summary>
 
-3. You need to add a form to create a new bot.
+### Message (object)
 
-4. The dashboard page and the chat page should be included in a new layout. This layout will have a sidebar/burger menu with all the past chats and a link to the developers page, plus a button to create a new bot.
+- **from** (string, required) - The id of the user who sent the message, or "BOT" if the message was sent by the bot.
+- **tagged** (array[string], optional) - The ids of the users who were tagged in the message.
+- **id** (string, required) - The unique identifier for the message.
+- **text** (string, required) - The content of the message.
+- **timestamp** (string, required) - The time when the message was sent.
 
-For the chat/index.tsx file, it seems to be handling the chat functionality well. However, you might want to consider adding error handling for the sendMessage mutation and also handling the case where the conversationId or bot.username is not available.
+### Conversation (object)
 
-Remember to use GraphQL for fetching and manipulating data, and the custom OGM methods for interacting with the Neo4j database. Also, use arrow functions as per your style preference.
+- **id** (string, required) - The unique identifier for the conversation.
+- **messages** (array[Message], required) - The messages in the conversation, ie all the tagged/reply messages from the channel, plus the bot's reply.
+
+### User (object)
+
+- **id** (string, required) - The unique identifier for the user.
+- **username** (string, required) - The username of the user.
+
+</details>
+
+### Response
+
+- **message** (string, required) - The message to be sent to the channel.
+
+The response message will automatically tag users in the message if they were tagged in the original message, unless the message is already a reply to a message that was tagged.
+
+The bot's message will be posted as a reply.
+
